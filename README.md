@@ -20,6 +20,10 @@ Twilio and ngrok to integrate with IDbox
 * User pays off part of loan -> Page updates with thankyou AND
 * if the whole loan paid off, redirects to Thankyou page, with credit rating and message about credit rating.
 
+[ONBOARDING FLOW](https://raw.githubusercontent.com/morkeltry/GAP-microfinance/master/onboarding.png | width=600)
+
+[LOANS FLOW](https://raw.githubusercontent.com/morkeltry/GAP-microfinance/master/loans.png | width=600)
+
 #### Lender portal (responsive for desktop / modern mobile):
 
 ##### Login page
