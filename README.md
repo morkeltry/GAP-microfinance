@@ -4,5 +4,30 @@ The Global Abundance Project aims to facilitate microfinance loans in developing
 As soon as is practicable, we will use the [Qi Currency](http://fintechworldwide.blogspot.com/2018/06/blockchain-capital-women-and.html) as the token in which funds are transferred.
 
 ### Stack:
-We will use a Node.js & PostgreSQL backend,
-The Ropsten testnet for running smart contracts in Solidity
+Node.js & PostgreSQL backend,
+
+Ropsten testnet for running smart contracts in Solidity
+
+Twilio and ngrok to integrate with IDbox
+
+### Flow overview:
+#### Loan receiver pages (mobile first, responsive down to 320x240):
+* registers with IDbox blockchain separately, and associates phone number with fingerprint.
+* sets up Ethereum account using MetaMask separately.
+* User lands on page with no Ethereum account set up -> Welcome / info page with instructions
+* User lands on page with Ethereum account set up but no loans outstanding -> Displays credit rating and available loans 
+* User lands on page with Ethereum account set up and loans outstanding -> Displays credit rating, loan due date, loan payment information (ethereum address)
+* User pays off part of loan -> Page updates with thankyou AND
+* if the whole loan paid off, redirects to Thankyou page, with credit rating and message about credit rating.
+
+#### Lender portal (responsive for desktop / modern mobile):
+
+##### Login page
+* Login
+##### Console page features
+* Display/ Update incoming payments address; 
+* Display/ Update minimum and maximum loan amounts
+* Display/ Update preferrred loan amount
+* Display/ Update minimum and maximum loan duration
+* Display/ Update preferred loan duration
+
