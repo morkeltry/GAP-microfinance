@@ -1,0 +1,34 @@
+
+
+    We will code the smart contract in the UK.
+    # Ok
+
+    We expect to code the SQL back end in the UK, but this may change - we are confirming it today.
+    # Confirmed, I am SQL developer.
+
+    The most important thing you will be making is a front end, which needs to be a web app optimised for mobile. It should be responsive, and able to function on a phone with resolution of 240x320.
+    # Once you will provdie me the design or psd I will start working of frontend on the meantime
+
+    This will be the receiver app. There will be different stages of flow. We will provide a flow diagram later today.
+    # Ok
+
+    The client app will login without a password, using, firstly, the EthereumProvider local API and, secondly, the twilio API. No need for you to code these, you can spoof them locally and we will add them in.
+    # Ok
+
+    There is also the lender portal. This is pretty much as described before and in your understanding document. Again, we expect to code the SQL in the UK, so you would be working mostly on UI.
+    We do not need the backend portal.
+    # Ok but how admin will operate the frontend and where we will save the data so we have to create database. If you don't need backend then we have to provide a section for admin login from where admin will able to operate app and able to check all data.
+
+    Most importantly though, we need this delivered quickly. We would like to work collaboratively on github, which will give us more time, but if that is not possible, we will need delivery in 3 to 4 days, depending on when we get started.
+    # Once I wil get the design I am able to share you exact time estimation, for UI I am confirming 4 days or 5 days.
+
+ME
+6:43 AM
+Mork Eltry
+
+Hi, Jinga.
+Not sure what you mean by this:
+"Ok but how admin will operate the frontend and where we will save the data so we have to create database. If you don't need backend then we have to provide a section for admin login from where admin will able to operate app and able to check all data.",
+but I'll answer what I think that you are asking.
+
+We don;t need an admin because it's a prototype. If we need to admin something, we'll just jump into PostgreSQL and edit it.
