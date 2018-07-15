@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "tape tests/*.js |tap-spec"
+    "test": "tape tests/*.js |tap-spec",
+    "dbbuild": "node ./server/database/db_build.js"
   },
   "repository": {
     "type": "git",
