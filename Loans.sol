@@ -23,14 +23,14 @@ contract Owned {
 }
 
 
-contract loans {
+contract loans is Owned {
     /* Public variables */
     string public standard = 'Non- funds holding';
     string public name = 'Global Abundance Project microfinance loans';        // we will migrate to Qi
     uint32 public day = 24*60*60*1000;
     uint8 public decimals;
 
-    uint32 internal lastLoanIdNo = 0;
+    uint32 internal lastLoanIdNo = 1;
 
     struct loan {
         uint256 startDate;      //doubles as loan duration up until acceptance;
@@ -43,15 +43,19 @@ contract loans {
             repaymentSchedule;
     }
 
-    struct history {
+    struct loanHistory {
         uint16 loanId;
-        mapping (uint8 => uint32) actualRepayments;
+        mapping (uint8 => uint32) actualRepayments;   // (cumulativeDays -> cumulativeAmount)
+    }
+
+    struct borrowerHistory {
+        mapping  (uint8 => loanHistory) loanSeq;
     }
 
     mapping (address => string) public lenderName;
     mapping (address => loan) public offers;
     mapping (address => loan) public loans;
-    mapping (address => history) public getHistory;
+    mapping (address => borrowerHistory) public getHistory;
 
     // assume money sent to contract is to repay sender's loan,
     // by wrapping makeRepayment().
@@ -67,7 +71,7 @@ contract loans {
         uint256 endDate, uint32 totalAmount);
 
     event RepaymentMade (address indexed borrower,
-        uint32 loanId, int16 daysUntilLoanEnd, uint32 amount);
+        uint32 loanId, int16 daysIntoLoan, uint32 amountRepaid);
 
     event LoanFullyRepaid (address indexed borrower,
         uint32 loanId, int16 daysUntilLoanEnd, uint32 totalAmount);
@@ -116,10 +120,10 @@ contract loans {
         require (offers[msg.sender].lender != "");
         require (offers[msg.sender].endDate - now >= 1*day);
 
-        uint16 memory duration = offers[msg.sender].startDate;
+        uint16 duration = offers[msg.sender].startDate;
         //no need to clone as new struct is in memory
         //DOUBLE CHECK THIS!!!
-        loan memory newLoan =offers[msg.sender];
+        loan memory newLoan = offers[msg.sender];
 
         // = {
         //     startDate = now;
@@ -148,13 +152,33 @@ contract loans {
         require (loans[msg.sender].lender != "");
         require (msg.value>0);
 
+        loan memory thisLoan = loans[msg.sender];
+        uint32 repaymentAmount = msg.value;
+        uint16 daysIntoLoan = (now-thisLoan.startDate) /day;
 
+        if  (msg.value>thisLoan.amountOutstanding) {
+            repaymentAmount = thisLoan.amountOutstanding;
+            msg.sender.send (msg.value-repaymentAmount);
+        }
+        thisLoan.transfer (repaymentAmount);
+        thisLoan.amountOutstanding -= repaymentAmount;
+        updateHistory (thisLoan.loanId, daysEarly, repaymentAmount);
+
+        if (thisLoan.amountOutstanding <= 0) {
+            emit LoanFullyRepaid (msg.sender, thisLoan.loanId, daysIntoLoan, thisLoan.amount-repaymentAmount);
+        }
 
     }
 
+    function updateHistory( uint16 loanId, uint16 daysIntoLoan, uint32 amountRepaid) internal returns (bool ok) {
+        borrowerHistory memory myHistory = getHistory(msg.sender);
+        // add an element to array. without using array ;)
+        if (myHistory.loanSeq[myHistory.pointer].loanId != loanId) {
+            pointer++;
+        }
+        myHistory.loanSeq[myHistory.pointer].actualRepayments[daysIntoLoan] = amountRepaid;
 
-    function updateHistory() internal returns (bool ok) {
-
+        emit  RepaymentMade (msg.sender, loanId, daysIntoLoan, amountRepaid);
     }
 
 
@@ -166,7 +190,7 @@ contract loans {
 
     function IdentifyLender(address lender) returns (address);
     function getLoan(address borrower) returns (loan);
-    function getHistory (address borrower) returns (history);
+    function getHistory (address borrower) returns (borrowerHistory);
 
 
     /* Initializes contract with initial supply tokens to the creator of the contract */
