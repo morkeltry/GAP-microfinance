@@ -18,9 +18,6 @@ router.get ('/hasloanoffer', hasLoanOffer);
 router.get ('/registeroffer', registerOffer);
 
 
-
-
-
 // catch 404 and forward to error handler
 router.use(function(req, res, next) {
   var err = new Error('Not Found:'+path.join(__dirname, '..',  'html'));
