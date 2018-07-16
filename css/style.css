@@ -1,0 +1,11 @@
+body{font-size:18px;}
+#wrapper-content{border: 1px solid #dfdfdf;margin-top: 35px;border-radius: 5px;padding-top: 25px;padding-bottom: 25px;}
+.pt-10{padding-top: 10px; padding-bottom: 10px;}
+.pt-0{ padding-top: 0 !important }
+form.id-form{margin-top:25px;}
+form.id-form .form-control{ height: 52px; font-size: 18px; }
+form.id-form .btn-group-lg>.btn, form.id-form .btn-lg{ padding:10px 30px;  }
+th{ text-align: center }
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th{font-size:14px;}
+hr{margin-top: 20px;margin-bottom: 20px;border-top: 1px solid #5cb85c;}
+.bg-green{background: #5cb85c;color:#fff; }
