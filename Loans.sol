@@ -33,7 +33,7 @@ contract loans {
     uint32 internal lastLoanIdNo = 0;
 
     struct loan {
-        uint256 startDate;
+        uint256 startDate;      //doubles as loan duration up until acceptance;
         uint256 endDate;
         uint16 loanId;
         address lender;
@@ -93,16 +93,9 @@ contract loans {
         require (msg.value>=offer.amount);
         require (loans[borrower].lender=="0x0");
 
-        loan memory offer;
-        offer.lender = msg.sender;
-        offer.amount = amount;
-        offer.endDate = endDate;
-        offer.startDate = (duration*day);
-        offer.repaymentSchedule = repaymentSchedule;
-        offer.loanID = ++lastLoanIdNo;
-
+        loan memory offer = loan((duration*day), endDate, ++lastLoanIdNo,
+                msg.sender, amount, 0, repaymentSchedule);
         offers[borrower] = offer;
-
     }
 
 
@@ -114,27 +107,33 @@ contract loans {
 
         uint32 amount = offers[borrower].amount;
         offers[borrower] = loan();
-        refundMistake( mas.ender, amount);
+        refundMistake( msg.sender, amount);
     }
 
 
-    function acceptLoan(loan newLoan) public returns (address repaymentAddr) {
+    function acceptLoan() public returns (address repaymentAddr) {
         require (loans[msg.sender].lender == "");
         require (offers[msg.sender].lender != "");
         require (offers[msg.sender].endDate - now >= 1*day);
 
-        uint16 memory duration = offers[msg.sender];
-        loan memory newLoan = {
-            startDate = now;
-            endDate = now + duration*day;
-            lender = offers[msg.sender].lender;
-            amount = offers[msg.sender].amount;
-            repaymentSchedule = offers[msg.sender].repaymentSchedule;
-            loanId = offers[msg.sender].loanId;
-        }
-        if offers[msg.sender].endDate < endDate {
-            endDate = offers[msg.sender].endDate
-        }
+        uint16 memory duration = offers[msg.sender].startDate;
+        //no need to clone as new struct is in memory
+        //DOUBLE CHECK THIS!!!
+        loan memory newLoan =offers[msg.sender];
+
+        // = {
+        //     startDate = now;
+        //     endDate = now + duration*day;
+        //     lender = offers[msg.sender].lender;
+        //     amount = offers[msg.sender].amount;
+        //     repaymentSchedule = offers[msg.sender].repaymentSchedule;
+        //     loanId = offers[msg.sender].loanId;
+        // }
+
+        offers[msg.sender].startDate = now;
+        offers[msg.sender].endDate = now + duration*day;
+        if (offers[msg.sender].endDate < endDate)
+            endDate = offers[msg.sender].endDate;
 
         offers[msg.sender] = loan();
         loans[msg.sender] = newLoan;
@@ -165,15 +164,9 @@ contract loans {
     }
 
 
-    function newLender()
-    function IdentifyLender() returns address
-    function changeLenderName()
-
-    function makeLoan()
-    function getLoan() returns loan
-    function makeRepayment()
-
-    function getHistory (borrower) returns history
+    function IdentifyLender(address lender) returns (address);
+    function getLoan(address borrower) returns (loan);
+    function getHistory (address borrower) returns (history);
 
 
     /* Initializes contract with initial supply tokens to the creator of the contract */
@@ -189,3 +182,5 @@ contract loans {
             symbol = tokenSymbol;                               // Set the symbol for display purposes
             decimals = decimalUnits;                            // Amount of decimals for display purposes
     }
+
+}
