@@ -4,8 +4,8 @@ BEGIN;
 
 CREATE TABLE borrowers
 (
-  eth_address VARCHAR(150) PRIMARY KEY NOT NULL,
-  phone_number VARCHAR(60) NOT NULL,
+  eth_address VARCHAR(42) PRIMARY KEY NOT NULL,
+  phone_number VARCHAR(20) NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -15,14 +15,14 @@ CREATE UNIQUE INDEX address_uniq_idx ON borrowers (eth_address);
 CREATE TABLE lenders
 (
   eth_address VARCHAR(150) PRIMARY KEY NOT NULL,
-  first_name VARCHAR(60) NOT NULL,
+  name VARCHAR(60) NOT NULL,
   capital INTEGER,
   min_amount INTEGER,
   max_amount INTEGER,
-  minduration INTEGER,
-  maxDuration INTEGER,
-  preferredAmount INTEGER,
-  preferredDuration INTEGER,
+  min_duration SMALLINT,
+  max_duration SMALLINT,
+  preferred_amount INTEGER,
+  preferred_duration SMALLINT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -31,40 +31,40 @@ CREATE UNIQUE INDEX address_uniq_idx ON lenders (eth_address);
 
 CREATE TABLE offered
 (
-  id BIGSERIAL PRIMARY KEY NOT NULL,
+  id SMALLSERIAL PRIMARY KEY NOT NULL,
   start_day TIMESTAMPTZ NOT NULL DEFAULT now(),
   end_day TIMESTAMPTZ NOT NULL DEFAULT now(),
-  repayment_schedule VARCHAR(150) NOT NULL,
+  repayment_schedule VARCHAR(1000) NOT NULL,
   lender_name VARCHAR(60) NOT NULL,
-  lender_eth_address VARCHAR(150) NOT NULL,
-  borrower_eth_address VARCHAR(150) NOT NULL,
+  lender_eth_address VARCHAR(42) NOT NULL,
+  borrower_eth_address VARCHAR(42) NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE accepted
 (
-  id BIGSERIAL PRIMARY KEY NOT NULL,
+  id SMALLSERIAL PRIMARY KEY NOT NULL,
   fully_paid BOOLEAN,
   start_day TIMESTAMPTZ NOT NULL DEFAULT now(),
   end_day TIMESTAMPTZ NOT NULL DEFAULT now(),
-  repayment_schedule VARCHAR(150),
+  repayment_schedule VARCHAR(1000),
   lender_name VARCHAR(60) NOT NULL,
-  lender_eth_address VARCHAR(60) NOT NULL,
-  borrower_eth_address VARCHAR(60) NOT NULL,
+  lender_eth_address VARCHAR(42) NOT NULL,
+  borrower_eth_address VARCHAR(42) NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE histories
 (
-  id BIGSERIAL PRIMARY KEY NOT NULL,
-  borrower_eth_address VARCHAR(150) PRIMARY KEY NOT NULL,
-  lender_eth_address VARCHAR(150) PRIMARY KEY NOT NULL,
+  id SMALLSERIAL PRIMARY KEY NOT NULL,
+  borrower_eth_address VARCHAR(42) PRIMARY KEY NOT NULL,
+  lender_eth_address VARCHAR(42) PRIMARY KEY NOT NULL,
   start_day TIMESTAMPTZ NOT NULL DEFAULT now(),
   end_day TIMESTAMPTZ NOT NULL DEFAULT now(),
   early_repayment_days VARCHAR(60) NOT NULL,
-  last_sync_address VARCHAR(60) NOT NULL,
+  last_sync_time TIMESTAMPTZ NOT NULL DEFAULT now(),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
