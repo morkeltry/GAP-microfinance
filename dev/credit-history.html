@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Loan Flow 2</title>
+    <meta name="description" content="Source code generated using layoutit.com">
+    <meta name="author" content="LayoutIt!">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>	
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row clearfix pt-10">
+            <div class="container pt-0" id="wrapper-content">
+                <div class="bg-green row clearfix">
+                                      
+                    <div class="col-md-4">
+                        <h3><strong>Credit History</strong></h3>
+                    </div>
+                    <div class="col-md-8 table-responsive">
+						<table class="table" id="showData"></table>
+						<!--
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <td><strong>Date</strong></td>
+                                    <td align="right"><strong>Amount</strong></td>
+                                    <td align="right"><strong>Entry</strong></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>25/03/2018</td>
+                                    <td align="right">1500</td>
+                                    <td align="right">25/03/2018</td>
+                                </tr>                                        
+                            </tbody>
+                            
+                        </table>
+						-->
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-md-12 text-center">
+                        <h3>You are eligible<br> for</h3>
+                        <h1 class="text-success text-center"><strong>QI 1150</strong></h1>
+                        <form class="id-form">
+                            <button class="btn btn-success btn-lg">
+                                APPLY
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>    
+            
+        </div>
+        <script>
+		$.ajax({
+			url: '/retrieve',
+				complete: function(data) {
+				var myBooks = JSON.parse(data.responseText);
+				
+				 var col = [];
+				for (var i = 0; i < myBooks.length; i++) {
+					for (var key in myBooks[i]) {
+						if (col.indexOf(key) === -1) {
+							col.push(key);
+						}
+					}
+				}
+
+				// CREATE DYNAMIC TABLE.
+				var table = document.createElement("table");
+
+				// CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+
+				var tr = table.insertRow(-1);                   // TABLE ROW.
+
+				for (var i = 0; i < col.length; i++) {
+					var th = document.createElement("th");      // TABLE HEADER.
+					th.innerHTML = col[i];
+					tr.appendChild(th);
+				}
+
+				// ADD JSON DATA TO THE TABLE AS ROWS.
+				for (var i = 0; i < myBooks.length; i++) {
+
+					tr = table.insertRow(-1);
+
+					for (var j = 0; j < col.length; j++) {
+						var tabCell = tr.insertCell(-1);
+						tabCell.innerHTML = myBooks[i][col[j]];
+					}
+				}
+
+				// FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+				var divContainer = document.getElementById("showData");
+				divContainer.innerHTML = "";
+				divContainer.appendChild(table);
+			}
+		});
+		</script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/scripts.js"></script>
+</body>
+
+</html>
