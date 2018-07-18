@@ -18,7 +18,7 @@ const offerLoans = (req, res) => {
 }
 
 const retrieveLoans = (req, res) => {
-  const repayments = [
+  const jsonResponse = [
     {date : '15/3/18', amount : 150 },
     {date : '15/4/18', amount : 500 },
     {date : '1/8/18', amount : 75 },
@@ -26,10 +26,6 @@ const retrieveLoans = (req, res) => {
     {date : '15/10/18', amount : 1750 },
     {date : '1/11/18', amount : 75 },
   ]
-  // TODO: Pick next repayment from today, instead of first repayment
-  const nextRepayment = repayments[0].amount;
-  const repaymentTx = Object.assign ( {}, tx, {value: nextRepayment} );
-  const jsonResponse = {repayments, repaymentTx}
   const jString = JSON.stringify (jsonResponse);
   res.send (jString);
 
@@ -45,8 +41,6 @@ const hasLoanOffer = (req, res) => {
   };
   const jString = JSON.stringify (jsonResponse);
   res.send (jString);
-
 }
-
 
 module.exports = { offerLoans, retrieveLoans, hasLoanOffer}

@@ -4,6 +4,7 @@ const router = require('./routes');
 const bodyParser = require('body-parser');
 
 app.set('port', process.env.PORT || 3000);
+app.set("view engine","jade");
 
 app.use(
   bodyParser.urlencoded({

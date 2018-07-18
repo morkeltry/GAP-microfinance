@@ -4,6 +4,7 @@ const url = require('url');
 require('env2')('./.env');
 
 let DB_URL = process.env.DATABASE_URL;
+//set database url {local database}
 let options;
 
 if (!DB_URL) throw new Error('Enviroment variable DATABASE_URL must be set');
