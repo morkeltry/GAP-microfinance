@@ -7,7 +7,7 @@
 		<title>Global Amundance Program</title>
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<link rel="stylesheet" href="./css/bootstrap.min.css">
+		<link href="./css/bootstrap.min.css" rel="stylesheet">
 		<link href="./css/style.css" rel="stylesheet">
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	</head>
@@ -18,23 +18,17 @@
 					<div class="row clearfix">
 						<div class="col-md-8 col-md-offset-2 text-center logo">
                         	<img src="./img/logo.png" class="center-block img-responsive">
-                    	</div>           
+                    	</div>            
 						<div class="col-md-12 text-center">
-							<h3 class="font-green">Your Ethereum account is:</h3>
-							<h3 id="address"></h3>
-							<p>but you need to link your ID box phone numbers,</p>
-							<p class="font-red">Please make sure you know your Ethereum keys and then SMS<br><strong class="font-green"> 'XKGE' to 0123456789</strong></p>
-						</div>
-						<div class="col-md-12 text-center">
-							<form action="/loan_offer" class="id-form" method="get">                          
-								<button type="submit" class="btn btn-success btn-lg">Done</button>
-							</form>
+							<h3 class="font-green">Thank you!</h3>
 						</div>
 					</div>
-				</div>                                                                
+				</div>            
 			</div>
 		</div>
-		<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>        
+		<script src="./js/bootstrap.min.js"></script>
+		<script src="./js/scripts.js"></script>
 		<script>
 			window.addEventListener('load', function() {
 				// Load WEB3
@@ -53,6 +47,7 @@
 				
 				var account = web3.eth.accounts[0];
 				document.getElementById("address").innerHTML = account;
+				document.getElementById("borrower_eth_address").value = account;
 				var accountInterval = setInterval(function() {
 					if (web3.eth.accounts[0] !== account) 
 					{			  
@@ -62,8 +57,9 @@
 							web3.version.getNetwork((err, netId) => {
 								if(netId == 1)
 								{
-									window.location = 'http://localhost:3000/signup';
+									//window.location = 'http://localhost:3000/signup';
 									document.getElementById("address").innerHTML = account;
+									document.getElementById("borrower_eth_address").value = account;
 								}
 								else
 								{
@@ -73,17 +69,25 @@
 						}
 						else
 						{
-							window.location = 'http://localhost:3000';
+							//window.location = 'http://localhost:3000';
 						}
 					}
-				}, 100);						
+				}, 100);
 			});
 			
 			web3.eth.getAccounts(function(err, accounts){
-				if (accounts.length == 0) window.location = 'http://localhost:3000';
+				if (accounts.length == '') window.location = 'http://localhost:3000';
+			});
+			
+			$(function()
+			{      
+			  $('.number-only').keyup(function(e) {
+					if(this.value!='-')
+					  while(isNaN(this.value))
+						this.value = this.value.split('').reverse().join('').replace(/[\D]/i,'')
+											   .split('').reverse().join('');
+				})
 			});
 		</script>
-		<script src="./js/bootstrap.min.js"></script>
-		<script src="./js/scripts.js"></script>
 	</body>
 </html>

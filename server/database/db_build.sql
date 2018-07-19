@@ -10,7 +10,7 @@ CREATE TABLE borrowers
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE UNIQUE INDEX borrower_uniq_idx ON borrowers (eth_address);
+CREATE UNIQUE INDEX address_uniq_idx ON borrowers (eth_address);
 
 CREATE TABLE lenders
 (
@@ -27,7 +27,7 @@ CREATE TABLE lenders
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE UNIQUE INDEX lender_uniq_idx ON lenders (eth_address);
+CREATE UNIQUE INDEX address_uniq_idx ON lenders (eth_address);
 
 CREATE TABLE offered
 (
@@ -59,8 +59,8 @@ CREATE TABLE accepted
 CREATE TABLE histories
 (
   id SMALLSERIAL PRIMARY KEY NOT NULL,
-  borrower_eth_address VARCHAR(42) NOT NULL,
-  lender_eth_address VARCHAR(42) NOT NULL,
+  borrower_eth_address VARCHAR(42) PRIMARY KEY NOT NULL,
+  lender_eth_address VARCHAR(42) PRIMARY KEY NOT NULL,
   start_day TIMESTAMPTZ NOT NULL DEFAULT now(),
   end_day TIMESTAMPTZ NOT NULL DEFAULT now(),
   early_repayment_days VARCHAR(60) NOT NULL,

@@ -4,6 +4,7 @@ const { Router } = express;
 const router = Router();
 const paths = __dirname + '/views/';
 const bodyParser = require('body-parser');
+
 const mysql = require('mysql');
 const con = mysql.createConnection({
 	host: 'localhost',
@@ -54,11 +55,30 @@ router.get("/loan_offer", (req,res) => {
 });
 
 router.get("/retrieve_loan", (req,res) => {
-  res.sendFile(paths + "loan-flow-1.html");
+  con.query('select * from accepted', function (err, recordset) {		
+		if (err) throw err;
+		else
+			res.render('retrieve_loan', { loanList: recordset });		
+	});
 });
 
 router.get("/apply_loan", (req,res) => {
   res.sendFile(paths + "loan-flow-3.html");
+});
+
+router.get("/thanks", (req,res) => {
+  res.sendFile(paths + "thanks.html");
+});
+
+router.post('/apply_loan', function(req, res, next) {
+	con.connect(function(err){
+		if(err) throw err;
+		var sql = "INSERT INTO accepted (repayment_schedule,lender_name,lender_eth_address,borrower_eth_address,amount,duration,your_story) VALUES ('yearly','Jigna','0xa609653c58c36e5fb905627fad46dd28b112504b','"+req.body.borrower_eth_address+"','"+req.body.amount+"','"+req.body.duration+"','"+req.body.your_story+"')";
+		con.query(sql, function (err2, result){
+			if(err2) throw err2;
+			res.redirect('/thanks');
+		});
+	});
 });
 
 router.post('/signup', function(req, res, next) {    
@@ -71,9 +91,9 @@ router.post('/signup', function(req, res, next) {
 			console.log(result.length);
 			if(result.length > 0){
 				//res.sendFile(paths + "loan-flow-1.html");
-				var old_loan = "SELECT * FROM histories WHERE borrower_eth_address='"+req.body.eth_address+"'";
-				con.query(old_loan, function(err, result_loan){
-					if(err) throw err;
+				var old_loan = "SELECT * FROM accepted WHERE borrower_eth_address='"+req.body.eth_address+"'";
+				con.query(old_loan, function(err1, result_loan){
+					if(err1) throw err1;
 					if(result_loan.length > 0){
 						res.redirect('/retrieve_loan');						
 					}
