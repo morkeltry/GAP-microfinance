@@ -1,5 +1,20 @@
-body{font-size:18px;}
-#wrapper-content{border: 1px solid #dfdfdf;margin-top: 35px;border-radius: 5px;padding-top: 25px;padding-bottom: 25px;}
+body{font-size:18px;font-family:calibri;color:#404040;}
+.font-red{color:#c00000;}
+.font-green{color:#67B44B;}
+.font-Lgreen{color:#ddffdd;}
+.font-grey{color:#404040;}
+.font-yellow{color:#FFC000;}
+.font-white{color:#fff}
+.logo{ margin-bottom: 35px }
+.section-heading{font-family:din-condensed, sans-serif;}
+.badge-green{ background:#67B44B !important}
+.badge-red{ background:#c00000 !important}
+.badge-yellow{ background:#ffc000 !important}
+.badge-grey{ background:#404040!important}
+.badge-white{ background:#fff !important}
+
+#wrapper-content{border: 1px solid rgba(255,192,0,1);margin-top: 35px;border-radius: 5px;padding-top: 25px;padding-bottom: 25px;}
+#wrapper-content.onbording, .bg-yellow{background: rgba(255,192,0,0.2); }
 .pt-10{padding-top: 10px; padding-bottom: 10px;}
 .pt-0{ padding-top: 0 !important }
 form.id-form{margin-top:25px;}
@@ -7,5 +22,25 @@ form.id-form .form-control{ height: 52px; font-size: 18px; }
 form.id-form .btn-group-lg>.btn, form.id-form .btn-lg{ padding:10px 30px;  }
 th{ text-align: center }
 .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th{font-size:14px;}
-hr{margin-top: 20px;margin-bottom: 20px;border-top: 1px solid #5cb85c;}
-.bg-green{background: #5cb85c;color:#fff; }
+hr{margin-top: 20px;margin-bottom: 20px;border-top: 1px solid #5cb85c; width:100%}
+.bg-green{background: #67B44B;color:#fff; }
+.bg-gtransp{ background: rgba(103,180,75,0.2)}
+.bg-transp{ background: rgba(255,255,255,0.2)};
+.form-control{ color:#404040;border-color: #ffc000}
+.form-control:focus{border-color:#67B44B}
+textarea.form-control{ height: 135px}
+.btn-success {background-color:#67B44B;border-color:#5cb85c;}
+/*Loan Flow*/
+.loan-flow1{ background: url(/img/WOMEN_01.png)repeat-y center top #8B0203; color:#fff}
+.loan-flow1 a.font-yellow:hover{ color:#fff}
+.elig-box{padding-bottom:25px;}
+.box{background: url(D://GAP/server/views/img/WOMEN_01.png) no-repeat center top; color:#fff; padding-top: 15px; padding-bottom: 15px}
+.box .table-striped>tbody>tr:nth-of-type(odd) {background-color:rgba(0,0,0,0.2);color:#FFC000;}
+.box .table-striped>thead>tr>th{font-size: 16px}
+/*Lender Dashboard*/
+.dashboard-list{}
+.dashboard-list li{padding:15px;border-bottom: 1px solid rgba(255,255,255,0.5);}
+.dashboard-list li a{ font-size:20px;line-height:22px; display:block}
+.dashboard-list li:hover { background:rgba(255,192,0,0.2); color:#fff}
+.dashboard-list li:hover a{color:#fff}
+
