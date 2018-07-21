@@ -15,13 +15,12 @@ const con = mysql.createConnection({
 	database: 'db_build'
 });
 
-router.use(session({ secret: 'keyboard cat',
-  resave: true,
-  saveUninitialized: false,
-  cookie: { secure: true }
-  }
-  )
-  );
+router.use(session({ 
+	secret: 'somerandonstuffs',
+	resave: false,
+	saveUninitialized: false,
+	cookie: { expires: 600000 }
+  }));
 router.get('/loans', function (req, res) {
 	con.query('select * from borrowers', function (err, recordset) {		
 		if (err) 
@@ -34,7 +33,7 @@ router.get('/loans', function (req, res) {
 const { offerLoans, retrieveLoans, hasLoanOffer} = require ('./loans');
 const { registerOffer } = require ('./register-offer');
 
-// whitelist and serve the directory navigated to from this file
+//whitelist and serve the directory navigated to from this file
 //router.use( express.static( path.join(__dirname, '..',  'html')));
 router.use( express.static( path.join(__dirname, '..',  'views')));
 //router.use('/css', express.static( path.join(__dirname, '..',  'views/css')));
@@ -85,20 +84,53 @@ router.get("/lender_login", (req,res) => {
 });
 
 router.get("/lender_dashboard", (req,res) => {
-	res.sendFile(paths + "lender_dashboard.html");
+	var lender_eth_address = req.session.lender_eth_address;
+	var lender_name = req.session.lender_name;
+	if(lender_eth_address){
+		//res.sendFile(paths + "lender_dashboard.html");		
+		res.render('lender_dashboard', { user_name: lender_name });		
+	}
+	else{
+		res.redirect('/lender_login');
+	}		
 });
 
 router.get("/loans_given", (req,res) => {
-	console.log(req.session.lender_eth_address);
-	res.sendFile(paths + "loans_given.html");
+	//console.log(req.session.lender_eth_address);
+	var lender_eth_address = req.session.lender_eth_address;
+	var lender_name = req.session.lender_name;
+	if(lender_eth_address){
+		con.query('select * from accepted where lender_eth_address="'+lender_eth_address+'"', function (err, recordset) {		
+			if (err) 
+				console.log(err)
+			else
+				res.render('loans_given', { user_name: lender_name, loanGivenList: recordset });		
+		});			
+	}
+	else{
+		res.redirect('/lender_login');
+	}	
 });
 
 router.get("/story", (req,res) => {
-	res.sendFile(paths + "story.html");
+	var lender_eth_address = req.session.lender_eth_address;
+	var lender_name = req.session.lender_name;
+	if(lender_eth_address){
+		//res.sendFile(paths + "story.html");
+		res.render('story', { user_name: lender_name });		
+	}
+	else{
+		res.redirect('/lender_login');
+	}	
 });
 
 router.get("/thanks", (req,res) => {
 	res.sendFile(paths + "thanks.html");
+});
+
+router.get("/logout", (req,res) => {
+	req.session.destroy()
+	res.redirect('/lender_login');
 });
 
 router.post('/apply_loan', function(req, res, next) {
@@ -115,28 +147,22 @@ router.post('/apply_loan', function(req, res, next) {
 router.post('/lender_login', function(req, res, next) {
 	con.connect(function(err){
 		if(err) throw err;
-		else{
-			
+		else{			
 			var l_email = req.body.lender_name;
 			var l_password = req.body.lender_pass;
 			var sql = "SELECT * FROM lenders WHERE username='"+l_email+"' and password='"+l_password+"'";
 			con.query(sql, function (err2, result){
 				if(err2) throw err2;
-				else{
-					 
+				else{					 
 					if(result.length > 0){
-						console.log(result);
+						//console.log(result);
 						req.session.email_id = result[0].username;
-						console.log(req.session.email_id);
-						req.session.lender_eth_address = result[0].eth_address;
-						console.log(req.session.lender_eth_address);
+						req.session.lender_name = result[0].name;
+						//console.log(req.session.email_id);
+						req.session.lender_eth_address = result[0].eth_address;	
 						res.redirect('/lender_dashboard');						
 					}
 					else{
-						//req.flash('lender_login', 'invalid username or password');										
-						//req.flash('success', 'invalid username or password');
-						//res.locals.message = req.flash();
-						//res.render('lender_login');
 						res.redirect('/lender_login');	
 					}						
 				}

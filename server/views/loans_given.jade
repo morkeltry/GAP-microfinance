@@ -7,8 +7,8 @@ html(lang='en')
 		title Global Amundance Program
 		meta(name='description', content='')
 		meta(name='author', content='')
-		link(href='./css/bootstrap.min.css', rel='stylesheet')
-		link(href='./css/style.css', rel='stylesheet')
+		link(href='/css/bootstrap.min.css', rel='stylesheet')
+		link(href='/css/style.css', rel='stylesheet')
 		script(src='https://code.jquery.com/jquery-3.3.1.min.js')
 	body
 		.container-fluid
@@ -21,24 +21,26 @@ html(lang='en')
 							p
 								| Hi, #{user_name}   
 								a.font-yellow(href='/logout') Logout
-					.row.clearfix.bg-transp.elig-box
-						.col-md-8.col-md-offset-2
-							ul.list-unstyled.dashboard-list
-								li
-									a.font-white(href='/')
-										| Notifications 
-										sup.badge.badge-green 42
-								li
-									a.font-white(href='/loans_given')
-										| Loans Given 
-										sup.badge.badge-green 7
-								li
-									a.font-white(href='/') Lend Money
-								li
-									a.font-white(href='/') Track Qi Coin
-								li
-									a.font-white(href='/') Settings
+					.row.clearfix
+						h2.font-green.section-heading.text-center LOANED
+					.row.clearfix
+						.col-md-12
+							- each item in loanGivenList
+								.row.form-group.bg-transp.elig-box
+									.col-md-12
+										h3.font-green
+											| Abimbola, 
+											a(href='/story')
+												small.font-white Read my story
+											small.pull-right.font-white=	item.created_at
+										p.font-yellow
+											strong AGRICULTURAL:
+										p=	item.your_story
+										p.font-yellow Installment:=	item.duration
+										p.font-yellow Tokens Loaned:=	item.amount
 		script(src='https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js')
+		script(src='./js/bootstrap.min.js')
+		script(src='./js/scripts.js')
 		script.
 			window.addEventListener('load', function() {
 			// Load WEB3
@@ -54,7 +56,6 @@ html(lang='en')
 			console.error("Not connected");
 			}
 			var account = web3.eth.accounts[0];
-			document.getElementById("address").innerHTML = account;
 			var accountInterval = setInterval(function() {
 			if (web3.eth.accounts[0] !== account)
 			{
@@ -65,7 +66,6 @@ html(lang='en')
 			if(netId == 1)
 			{
 			//window.location = 'http://localhost:3000/signup';
-			document.getElementById("address").innerHTML = account;
 			}
 			else
 			{
@@ -75,7 +75,7 @@ html(lang='en')
 			}
 			else
 			{
-			window.location = 'http://localhost:3000';
+			//window.location = 'http://localhost:3000';
 			}
 			}
 			}, 100);
@@ -83,5 +83,3 @@ html(lang='en')
 			web3.eth.getAccounts(function(err, accounts){
 			if (accounts.length == 0) window.location = 'http://localhost:3000';
 			});
-		script(src='./js/bootstrap.min.js')
-		script(src='./js/scripts.js')
