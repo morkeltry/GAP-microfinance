@@ -29,15 +29,18 @@ html(lang='en')
 								.row.form-group.bg-transp.elig-box
 									.col-md-12
 										h3.font-green
-											| Abimbola, 
-											a(href='/story')
+											a(href='/story?a=#{item.id}')
 												small.font-white Read my story
 											small.pull-right.font-white=	item.created_at
 										p.font-yellow
-											strong AGRICULTURAL:
+											strong Story:
 										p=	item.your_story
-										p.font-yellow Installment:=	item.duration
-										p.font-yellow Tokens Loaned:=	item.amount
+										p
+											strong.font-yellow Installment: 
+											small.font-yellow=	item.duration
+										p
+											strong.font-yellow Tokens Loaned: 
+											small.font-yellow=	item.amount
 		script(src='https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js')
 		script(src='./js/bootstrap.min.js')
 		script(src='./js/scripts.js')
