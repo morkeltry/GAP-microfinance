@@ -27,6 +27,7 @@
     "body-parser": "^1.18.3",
     "connect-flash": "^0.1.1",
     "env2": "^2.2.2",
+    "execsql": "0.0.3",
     "express-session": "^1.15.6",
     "generate-password": "^1.4.0",
     "mysql": "^2.16.0",
