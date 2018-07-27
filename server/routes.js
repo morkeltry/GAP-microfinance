@@ -16,6 +16,7 @@ router.use(session({
 	saveUninitialized: false,
 	cookie: { expires: 600000 }
   }));
+
 router.get('/loans', function (req, res) {
 	con.query('select * from borrowers', function (err, recordset) {
 		if (err)
@@ -28,13 +29,15 @@ router.get('/loans', function (req, res) {
 const { offerLoans, retrieveLoans, hasLoanOffer} = require ('./loans');
 const { registerOffer } = require ('./register-offer');
 
+console.log(path.join(__dirname, '..',  'views/css'));
+
 //whitelist and serve the directory navigated to from this file
 //router.use( express.static( path.join(__dirname, '..',  'html')));
-router.use( express.static( path.join(__dirname, '..',  'views')));
-//router.use('/css', express.static( path.join(__dirname, '..',  'views/css')));
-//router.use('/img', express.static( path.join(__dirname, '..',  'views/img')));
-//router.use('/js', express.static( path.join(__dirname, '..',  'views/js')));
-//router.use('/fonts', express.static( path.join(__dirname, '..',  'views/fonts')));
+router.use( express.static( path.join(__dirname, '..',  'views/')));
+router.use('/css', express.static( path.join(__dirname, '..',  'views/css')));
+router.use('/img', express.static( path.join(__dirname, '..',  'views/img')));
+router.use('/js', express.static( path.join(__dirname, '..',  'views/js')));
+router.use('/fonts', express.static( path.join(__dirname, '..',  'views/fonts')));
 
 //router.get('/', (req, res) => res.send('Hello World!'));
 

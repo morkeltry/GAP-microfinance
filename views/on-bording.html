@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Global Abundance Program</title>
+		<title>Global Amundance Program</title>
 		<meta name="description" content="">
 		<meta name="author" content="">
 		<link href="./css/bootstrap.min.css" rel="stylesheet">
@@ -12,7 +12,7 @@
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	</head>
 	<body>
-		<div class="container-fluid test">
+		<div class="container-fluid">
 			<div class="row clearfix">
 				<div class="container onbording" id="wrapper-content">
 					<div class="row clearfix">
@@ -20,27 +20,16 @@
                         	<img src="./img/logo.png" class="center-block img-responsive">
                     	</div>
 						<div class="col-md-12 text-center">
-							<h3 class="font-green section-heading">Welcome!</h3>
-							<h3>Your Ethereum account is:</h3>
-							<h3 id="address" class="font-red"></h3>
-							<p>If you are registered with ID box, please enter your ID box phone number</p>
-						</div>
-						<div class="col-md-8 col-md-offset-2 text-center">
-							<form action="/signup" method="POST">
-								<fieldset>
-									<div class="form-group">
-										<input type="text" class="hidden" id="eth_address" name="eth_address">
-										<input type="number" required class="form-control number-only text-center" name="phone" id="phoneNumber" placeholder="your IDbox phone number">
-									</div>
-									<button type="submit" class="btn btn-success btn-lg">Register</button>
-								</fieldset>
-							</form>
+							<h3 class="font-green">GAP microfinance explanation</h3>
+							<p><strong class="font-red">To begin</strong>, you need to install Metamask, and get an Ethereum account and register with ID box</p>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 		<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+		<script src="./js/bootstrap.min.js"></script>
+		<script src="./js/scripts.js"></script>
 		<script>
 			window.addEventListener('load', function() {
 				// Load WEB3
@@ -58,8 +47,6 @@
 				}
 
 				var account = web3.eth.accounts[0];
-				document.getElementById("address").innerHTML = account;
-				document.getElementById("eth_address").value = account;
 				var accountInterval = setInterval(function() {
 					if (web3.eth.accounts[0] !== account)
 					{
@@ -70,7 +57,6 @@
 								if(netId == 1)
 								{
 									window.location = 'http://localhost:3000/signup';
-									document.getElementById("address").innerHTML = account;
 								}
 								else
 								{
@@ -80,27 +66,15 @@
 						}
 						else
 						{
-							window.location = 'http://localhost:3000';
+							//window.location = 'http://localhost:3000';
 						}
 					}
 				}, 100);
 			});
 
 			web3.eth.getAccounts(function(err, accounts){
-				if (accounts.length == 0) window.location = 'http://localhost:3000';
-			});
-
-			$(function()
-			{
-			  $('.number-only').keyup(function(e) {
-					if(this.value!='-')
-					  while(isNaN(this.value))
-						this.value = this.value.split('').reverse().join('').replace(/[\D]/i,'')
-											   .split('').reverse().join('');
-				})
+				if (accounts.length > 0) window.location = 'http://localhost:3000/signup';
 			});
 		</script>
-		<script src="./js/bootstrap.min.js"></script>
-		<script src="./js/scripts.js"></script>
 	</body>
 </html>

@@ -7,12 +7,12 @@
 		<title>Global Abundance Program</title>
 		<meta name="description" content="">
 		<meta name="author" content="">
-		<link href="./css/bootstrap.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="./css/bootstrap.min.css">
 		<link href="./css/style.css" rel="stylesheet">
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	</head>
 	<body>
-		<div class="container-fluid test">
+		<div class="container-fluid">
 			<div class="row clearfix">
 				<div class="container onbording" id="wrapper-content">
 					<div class="row clearfix">
@@ -20,20 +20,14 @@
                         	<img src="./img/logo.png" class="center-block img-responsive">
                     	</div>
 						<div class="col-md-12 text-center">
-							<h3 class="font-green section-heading">Welcome!</h3>
-							<h3>Your Ethereum account is:</h3>
-							<h3 id="address" class="font-red"></h3>
-							<p>If you are registered with ID box, please enter your ID box phone number</p>
+							<h3 class="font-green">Your Ethereum account is:</h3>
+							<h3 id="address"></h3>
+							<p>but you need to link your ID box phone number.</p>
+							<p class="font-red">Please make sure you know your Ethereum keys and then SMS<br><strong class="font-green"> 'XKGE' to 0123456789</strong></p>
 						</div>
-						<div class="col-md-8 col-md-offset-2 text-center">
-							<form action="/signup" method="POST">
-								<fieldset>
-									<div class="form-group">
-										<input type="text" class="hidden" id="eth_address" name="eth_address">
-										<input type="number" required class="form-control number-only text-center" name="phone" id="phoneNumber" placeholder="your IDbox phone number">
-									</div>
-									<button type="submit" class="btn btn-success btn-lg">Register</button>
-								</fieldset>
+						<div class="col-md-12 text-center">
+							<form action="/loan_offer" class="id-form" method="get">
+								<button type="submit" class="btn btn-success btn-lg">Done</button>
 							</form>
 						</div>
 					</div>
@@ -59,7 +53,6 @@
 
 				var account = web3.eth.accounts[0];
 				document.getElementById("address").innerHTML = account;
-				document.getElementById("eth_address").value = account;
 				var accountInterval = setInterval(function() {
 					if (web3.eth.accounts[0] !== account)
 					{
@@ -88,16 +81,6 @@
 
 			web3.eth.getAccounts(function(err, accounts){
 				if (accounts.length == 0) window.location = 'http://localhost:3000';
-			});
-
-			$(function()
-			{
-			  $('.number-only').keyup(function(e) {
-					if(this.value!='-')
-					  while(isNaN(this.value))
-						this.value = this.value.split('').reverse().join('').replace(/[\D]/i,'')
-											   .split('').reverse().join('');
-				})
 			});
 		</script>
 		<script src="./js/bootstrap.min.js"></script>
