@@ -8,14 +8,7 @@ const session = require('express-session');
 const flash = require('connect-flash');
 var nodemailer = require('nodemailer');
 var generator = require('generate-password');
-
-const mysql = require('mysql');
-const con = mysql.createConnection({
-	host: 'localhost',
-	user: 'root',
-	password: '',
-	database: 'db_build'
-});
+const con = require('./database/db_connection');
 
 router.use(session({
 	secret: 'somerandonstuffs',
