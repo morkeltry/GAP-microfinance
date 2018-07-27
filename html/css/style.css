@@ -30,18 +30,17 @@ hr{margin-top: 20px;margin-bottom: 20px;border-top: 1px solid #5cb85c; width:100
 .form-control:focus{border-color:#67B44B}
 textarea.form-control{ height: 135px}
 .btn-success {background-color:#67B44B;border-color:#5cb85c;}
-
 /*Loan Flow*/
-.loan-flow1{ background: url(/img/WOMEN_01.png)no-repeat center top #8B0203; color:#fff}
+.loan-flow1{ background: url(/img/WOMEN_01.png)repeat-y center top #8B0203; color:#fff}
 .loan-flow1 a.font-yellow:hover{ color:#fff}
 .elig-box{padding-bottom:25px;}
 .box{background: url(D://GAP/server/views/img/WOMEN_01.png) no-repeat center top; color:#fff; padding-top: 15px; padding-bottom: 15px}
 .box .table-striped>tbody>tr:nth-of-type(odd) {background-color:rgba(0,0,0,0.2);color:#FFC000;}
 .box .table-striped>thead>tr>th{font-size: 16px}
-
 /*Lender Dashboard*/
 .dashboard-list{}
 .dashboard-list li{padding:15px;border-bottom: 1px solid rgba(255,255,255,0.5);}
 .dashboard-list li a{ font-size:20px;line-height:22px; display:block}
 .dashboard-list li:hover { background:rgba(255,192,0,0.2); color:#fff}
 .dashboard-list li:hover a{color:#fff}
+

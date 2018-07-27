@@ -3,7 +3,6 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 19, 2018 at 03:18 PM
 -- Server version: 10.1.28-MariaDB
 -- PHP Version: 7.1.10
 
@@ -91,11 +90,18 @@ CREATE TABLE `lenders` (
   `max_duration` smallint(6) DEFAULT NULL,
   `preferred_amount` int(11) DEFAULT NULL,
   `preferred_duration` smallint(6) DEFAULT NULL,
+  `username` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- --------------------------------------------------------
+--
+-- Dumping data for table `lenders`
+--
+
+INSERT INTO `lenders` (`eth_address`, `name`, `capital`, `min_amount`, `max_amount`, `min_duration`, `max_duration`, `preferred_amount`, `preferred_duration`, `username`, `password`, `created_at`, `updated_at`) VALUES
+('0x24a8ca2fa39ea49c9b01bdd99aa48257d8017543', 'tester', 1, 2500, 5000, 1, 3, 3000, 2, 'test', '123456', '2018-07-20 09:27:33', '2018-07-20 09:27:33');
 
 --
 -- Table structure for table `offered`
