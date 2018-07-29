@@ -10,6 +10,10 @@ var nodemailer = require('nodemailer');
 var generator = require('generate-password');
 const con = require('./database/db_connection');
 
+const { offerLoans, retrieveLoans, hasLoanOffer} = require ('./loans');
+const { registerOffer } = require ('./register-offer');
+const { isIdBoxregistered } = require ('./blockchain')
+
 router.use(session({
 	secret: 'somerandonstuffs',
 	resave: false,
@@ -25,9 +29,6 @@ router.get('/loans', function (req, res) {
 			res.render('loan', { loanList: recordset });
 	});
 });
-
-const { offerLoans, retrieveLoans, hasLoanOffer} = require ('./loans');
-const { registerOffer } = require ('./register-offer');
 
 console.log(path.join(__dirname, '..',  'views/css'));
 
@@ -54,11 +55,58 @@ router.get("/", (req,res) => {
 });
 
 router.get("/signup", (req,res) => {
-  res.sendFile(paths + "on-bording-2.html");
+	console.log('SIGNUP');
+	if (isIdBoxregistered() ) {												// TODO: Temporarily passing undef, undef. Use a real ethAddr!
+		console.log('redirect to LOAN_OFFER');
+		res.redirect('/loan_offer');
+	}
+	else {
+		console.log('serve OB2');
+  	res.sendFile(paths + "on-bording-2.html");
+	}
 });
 
 router.get("/info", (req,res) => {
-  res.sendFile(paths + "on-bording-3.html");
+	if (isIdBoxregistered() ) {				// TODO:  Temporarily passing undef, undef. Use a real ethAddr!
+		res.redirect('/loan_offer');
+	}
+	else {
+		res.sendFile(paths + "on-bording-3.html");
+	}
+});
+
+router.post('/signup', function(req, res, next) {
+    con.connect(function(err) {
+		if (err) throw err;
+		//console.log("connected");
+		var edit_sql = "SELECT * FROM borrowers WHERE eth_address='"+req.body.eth_address+"'";
+		con.query(edit_sql, function(err, result){
+			if(err) throw err;
+			//console.log(result.length);loans-flow-1
+			if(result.length > 0){
+				//res.sendFile(paths + "loan-flow-1.html");
+				var old_loan = "SELECT * FROM accepted WHERE borrower_eth_address='"+req.body.eth_address+"'";
+				con.query(old_loan, function(err1, result_loan){
+					if(err1) throw err1;
+					if(result_loan.length > 0){
+						res.redirect('/retrieve_loan');
+					}
+					else{
+						res.redirect('/loan_offer');
+					}
+				});
+			}
+			else
+			{
+				var sql = "INSERT INTO borrowers (eth_address,phone_number) VALUES ('"+req.body.eth_address+"','"+req.body.phone+"')";
+				con.query(sql, function(err, result){
+					if(err) throw err;
+					//console.log("table created");
+					res.redirect('/info');
+				});
+			}
+		});
+	});
 });
 
 router.get("/loan_offer", (req,res) => {
@@ -284,40 +332,6 @@ router.post('/lender_login', function(req, res, next) {
 	});
 });
 
-router.post('/signup', function(req, res, next) {
-    con.connect(function(err) {
-		if (err) throw err;
-		//console.log("connected");
-		var edit_sql = "SELECT * FROM borrowers WHERE eth_address='"+req.body.eth_address+"'";
-		con.query(edit_sql, function(err, result){
-			if(err) throw err;
-			//console.log(result.length);
-			if(result.length > 0){
-				//res.sendFile(paths + "loan-flow-1.html");
-				var old_loan = "SELECT * FROM accepted WHERE borrower_eth_address='"+req.body.eth_address+"'";
-				con.query(old_loan, function(err1, result_loan){
-					if(err1) throw err1;
-					if(result_loan.length > 0){
-						res.redirect('/retrieve_loan');
-					}
-					else{
-						res.redirect('/loan_offer');
-					}
-				});
-			}
-			else
-			{
-				var sql = "INSERT INTO borrowers (eth_address,phone_number) VALUES ('"+req.body.eth_address+"','"+req.body.phone+"')";
-				con.query(sql, function(err, result){
-					if(err) throw err;
-					//console.log("table created");
-					res.redirect('/info');
-				});
-			}
-		});
-	});
-
-});
 
 // catch 404 and forward to error handler
 router.use(function(req, res, next) {
