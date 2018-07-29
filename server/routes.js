@@ -2,13 +2,16 @@ const express = require('express');
 const path = require('path');
 const { Router } = express;
 const router = Router();
-const paths = __dirname + '/views/';
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
 var nodemailer = require('nodemailer');
 var generator = require('generate-password');
 const con = require('./database/db_connection');
+
+
+const paths = path.join(__dirname, '..',  'views/');
+
 
 const { offerLoans, retrieveLoans, hasLoanOffer} = require ('./loans');
 const { registerOffer } = require ('./register-offer');
@@ -61,14 +64,17 @@ router.get("/signup", (req,res) => {
 		res.redirect('/loan_offer');
 	}
 	else {
-		console.log('serve OB2');
+		console.log('serve OB2 - signup');
   	res.sendFile(paths + "on-bording-2.html");
 	}
 });
 
+// NB The /info page, ob-2 submits a GET request to itself
 router.get("/info", (req,res) => {
-	if (isIdBoxregistered() ) {				// TODO:  Temporarily passing undef, undef. Use a real ethAddr!
+	console.log('INFO..');
+	if (isIdBoxregistered() ) {											// TODO:  Temporarily passing undef, undef. Use a real ethAddr!
 		res.redirect('/loan_offer');
+		console.log('INFO redirect to LOAN_OFFER');
 	}
 	else {
 		res.sendFile(paths + "on-bording-3.html");
@@ -76,18 +82,28 @@ router.get("/info", (req,res) => {
 });
 
 router.post('/signup', function(req, res, next) {
+	console.log('SIGNUP (POST)');
     con.connect(function(err) {
-		if (err) throw err;
+		if (err) {
+			if (err.message = 'Cannot enqueue Handshake after already enqueuing a Handshake.')
+				console.log('Tried a second mysql connection. Never mind- the onld one will work.');
+			else
+				console.log('Does this error matter? :'+err.message+'#');
+			}
 		//console.log("connected");
 		var edit_sql = "SELECT * FROM borrowers WHERE eth_address='"+req.body.eth_address+"'";
 		con.query(edit_sql, function(err, result){
-			if(err) throw err;
+			console.log('Succesful db query retrieved: ',result.length,' loans');
+			if(err)
+				console.log(err);
 			//console.log(result.length);loans-flow-1
 			if(result.length > 0){
 				//res.sendFile(paths + "loan-flow-1.html");
 				var old_loan = "SELECT * FROM accepted WHERE borrower_eth_address='"+req.body.eth_address+"'";
 				con.query(old_loan, function(err1, result_loan){
-					if(err1) throw err1;
+					if(err1)
+						console.log(err1);
+					console.log('Cool - retrieved result:\n',result_loan);
 					if(result_loan.length > 0){
 						res.redirect('/retrieve_loan');
 					}
