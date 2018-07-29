@@ -1,5 +1,0 @@
-
-const isIdBoxregistered(ethAddr, phoneNo) = {
-
-
-}
