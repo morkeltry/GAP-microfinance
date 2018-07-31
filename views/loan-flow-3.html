@@ -35,13 +35,21 @@
 						</div>
 						<div class="col-md-12">
 							<form action="/apply_loan" method="post">
+								<div id="lender_row" class="form-group row clearfix" style="visibility : hidden;">
+									<div class="col-md-4 col-sm-6">
+										<label>Lender</label>
+									</div>
+									<div class="col-md-8 col-sm-6">
+										<input id="lender" type="text" class="form-control" value="" name="duration" placeholder="AWAITING LENDER">
+									</div>
+								</div>
 								<div class="form-group row clearfix">
 									<div class="col-md-4 col-sm-6">
 										<label>Amount</label>
 									</div>
 									<div class="col-md-8 col-sm-6">
 										<input type="text" class="hidden" name="borrower_eth_address" id="borrower_eth_address">
-										<input type="text" class="form-control number-only" name="amount" placeholder="Amount">
+										<input  id="amount" type="text" class="form-control number-only" name="amount" placeholder="Amount">
 									</div>
 								</div>
 								<div class="form-group row clearfix">
@@ -49,20 +57,20 @@
 										<label>Duration</label>
 									</div>
 									<div class="col-md-8 col-sm-6">
-										<input type="text" class="form-control" value="17 days" name="duration" placeholder="Duration">
+										<input id="duration" type="text" class="form-control" value="" name="duration" placeholder="Duration">
 									</div>
 								</div>
 								<div class="form-group row clearfix">
 									<div class="col-md-4 col-sm-6">
-										<label>Your Story</label>
+										<label>Loan Purpose</label>
 									</div>
-									<div class="col-md-8 col-sm-6">
-										<textarea name="your_story" class="form-control"></textarea>
+									<div id="purpose" class="col-md-8 col-sm-6">
+										<textarea name="purpose" class="form-control"></textarea>
 									</div>
 								</div>
 								<div class="form-group row clearfix">
 									<div class="col-md-4 col-sm-6">
-										<button id="accept" class="btn btn-default" onclick="getLoanOffers('populateLoans');">Check Loan offers</button>
+										<button id="check" class="btn btn-default">Check Loan offers</button>
 									</div>
 									<div class="col-md-8 col-sm-6">
 									</div>
@@ -144,20 +152,53 @@
 				})
 			});
 
-			$( "a" ).click(getLoanOffers);
+			$( "#check" ).click(getLoanOffer);
 
-			function getLoanOffers (ev, callback) {
-					console.log (ev);
-					console.log (callback);
+			function sendTx (tx) {
+				// TODO: this should error if tx.from does not match one of web3.eth.accounts[] .
+				// but for now, let's just get it pulling up a Metamask box
+				tx.from = tx.from || web3.eth.accounts[0];
+				// Ya know what, how about we just set it to what will work ;)
+				tx.from = web3.eth.accounts[0];
+				if (!tx.gas || tx.gas < 85000)
+					tx.gas = 85000;
+				web3.eth.sendTransaction(tx, function (err, receipt) {
+							console.log (err, receipt);
+						});
+			};
 
-				ev.preventDefault();
-				$.ajax({
-				url: '/hasloanoffer',
-					complete: function(data) {
-					console.log (JSON.parse(data.responseText));
+			function populateLoan (loan) {
+				if (loan) {
+					$( "#lender_row" ).css("visibility","inherit");
+					$( "#lender" ).val("Global Abundance Platform");
+					$( "#amount" ).val("ETH 0.001");
+					$( "#duration" ).val(28);
 
+
+
+					$( "#accept" ).click( function (ev) {
+						// TODO : check tx is good
+						ev.preventDefault();
+						sendTx (loan.tx);
+					});
+				} else {
+					// TODO : modal
 				}
-			})
+			}
+
+			function getLoanOffer (ev, callback) {
+				ev.preventDefault();
+				callback = callback || populateLoan;
+						console.log (ev);
+						console.log (callback);
+
+				$.ajax({
+					url: '/hasloanoffer',
+					complete: function(data) {
+						loan = JSON.parse(data.responseText);
+						callback (loan);
+					}
+				})
 			};
 
 		</script>
