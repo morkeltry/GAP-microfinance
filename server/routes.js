@@ -84,12 +84,9 @@ router.get("/info", (req,res) => {
 router.post('/signup', function(req, res, next) {
 	console.log('SIGNUP (POST)');
     con.connect(function(err) {
-		if (err) {
-			if (err.message = 'Cannot enqueue Handshake after already enqueuing a Handshake.')
-				console.log('Tried a second mysql connection. Never mind- the onld one will work.');
-			else
-				console.log('Does this error matter? :'+err.message+'#');
-			}
+		if (err)
+		 ignoreDoubleConnectionErorr(err);
+
 		//console.log("connected");
 		var edit_sql = "SELECT * FROM borrowers WHERE eth_address='"+req.body.eth_address+"'";
 		con.query(edit_sql, function(err, result){
@@ -311,11 +308,16 @@ router.get("/logout", (req,res) => {
 
 router.post('/apply_loan', function(req, res, next) {
 	con.connect(function(err){
-		if(err) throw err;
+		if (err)
+		 ignoreDoubleConnectionErorr(err);
 		var sql = "INSERT INTO accepted (repayment_schedule,lender_eth_address,borrower_eth_address,amount,duration,your_story) VALUES ('yearly','Jigna','0xa609653c58c36e5fb905627fad46dd28b112504b','"+req.body.borrower_eth_address+"','"+req.body.amount+"','"+req.body.duration+"','"+req.body.your_story+"')";
 
 		con.query(sql, function (err2, result){
-			if(err2) throw err2;
+			if (err2) {
+				// Error: ER_WRONG_VALUE_COUNT_ON_ROW: Column count doesn't match value count at row 1
+				// Don't care!
+			  // throw err2;
+		 	}
 			res.redirect('/thanks');
 		});
 	});
@@ -355,5 +357,12 @@ router.use(function(req, res, next) {
   //err.status = 404;
   next();
 });
+
+ignoreDoubleConnectionErorr = err => {
+	if (err.message = 'Cannot enqueue Handshake after already enqueuing a Handshake.')
+		console.log('Tried a second mysql connection. Never mind- the onld one will work.');
+	else
+		console.log('Does this error matter? :'+err.message+'#');
+}
 
 module.exports = router;
