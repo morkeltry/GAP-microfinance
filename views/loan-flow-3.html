@@ -4,8 +4,8 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Global Amundance Program</title>
-		<meta name="description" content="">
+		<title>Global Abundance Project</title>
+		<meta name="description" content="LOAN APPLICATION PAGE">
 		<meta name="author" content="">
 		<link href="./css/bootstrap.min.css" rel="stylesheet">
 		<link href="./css/style.css" rel="stylesheet">
@@ -35,13 +35,21 @@
 						</div>
 						<div class="col-md-12">
 							<form action="/apply_loan" method="post">
+								<div id="lender_row" class="form-group row clearfix" style="visibility : hidden;">
+									<div class="col-md-4 col-sm-6">
+										<label>Lender</label>
+									</div>
+									<div class="col-md-8 col-sm-6">
+										<input id="lender" type="text" class="form-control" value="" name="duration" placeholder="AWAITING LENDER">
+									</div>
+								</div>
 								<div class="form-group row clearfix">
 									<div class="col-md-4 col-sm-6">
 										<label>Amount</label>
 									</div>
 									<div class="col-md-8 col-sm-6">
 										<input type="text" class="hidden" name="borrower_eth_address" id="borrower_eth_address">
-										<input type="text" required class="form-control number-only" name="amount" placeholder="Amount">
+										<input  id="amount" type="text" class="form-control number-only" name="amount" placeholder="Amount">
 									</div>
 								</div>
 								<div class="form-group row clearfix">
@@ -49,20 +57,20 @@
 										<label>Duration</label>
 									</div>
 									<div class="col-md-8 col-sm-6">
-										<input type="text" class="form-control" value="17 days" name="duration" placeholder="Duration">
+										<input id="duration" type="text" class="form-control" value="" name="duration" placeholder="Duration">
 									</div>
 								</div>
 								<div class="form-group row clearfix">
 									<div class="col-md-4 col-sm-6">
-										<label>Your Story</label>
+										<label>Loan Purpose</label>
 									</div>
-									<div class="col-md-8 col-sm-6">
-										<textarea name="your_story" class="form-control"></textarea>
+									<div id="purpose" class="col-md-8 col-sm-6">
+										<textarea name="purpose" class="form-control"></textarea>
 									</div>
 								</div>
 								<div class="form-group row clearfix">
 									<div class="col-md-4 col-sm-6">
-										<button class="btn btn-default">Check Loan offers</button>
+										<button id="check" class="btn btn-default">Check Loan offers</button>
 									</div>
 									<div class="col-md-8 col-sm-6">
 									</div>
@@ -70,7 +78,7 @@
 								<div class="form-group row clearfix">
 									<div class="col-md-12 col-sm-12 text-center">
 										<p>&nbsp;</p>
-										<button type="submit" class="btn btn-success btn-lg">Take This Loan</button>
+										<button id="accept" class="btn btn-success btn-lg">Take This Loan</button>
 										<p>&nbsp;</p>
 									</div>
 								</div>
@@ -143,6 +151,56 @@
 											   .split('').reverse().join('');
 				})
 			});
+
+			$( "#check" ).click(getLoanOffer);
+
+			function sendTx (tx) {
+				// TODO: this should error if tx.from does not match one of web3.eth.accounts[] .
+				// but for now, let's just get it pulling up a Metamask box
+				tx.from = tx.from || web3.eth.accounts[0];
+				// Ya know what, how about we just set it to what will work ;)
+				tx.from = web3.eth.accounts[0];
+				if (!tx.gas || tx.gas < 85000)
+					tx.gas = 85000;
+				web3.eth.sendTransaction(tx, function (err, receipt) {
+							console.log (err, receipt);
+						});
+			};
+
+			function populateLoan (loan) {
+				if (loan) {
+					$( "#lender_row" ).css("visibility","inherit");
+					$( "#lender" ).val("Global Abundance Platform");
+					$( "#amount" ).val("ETH 0.001");
+					$( "#duration" ).val(28);
+
+
+
+					$( "#accept" ).click( function (ev) {
+						// TODO : check tx is good
+						ev.preventDefault();
+						sendTx (loan.tx);
+					});
+				} else {
+					// TODO : modal
+				}
+			}
+
+			function getLoanOffer (ev, callback) {
+				ev.preventDefault();
+				callback = callback || populateLoan;
+						console.log (ev);
+						console.log (callback);
+
+				$.ajax({
+					url: '/hasloanoffer',
+					complete: function(data) {
+						loan = JSON.parse(data.responseText);
+						callback (loan);
+					}
+				})
+			};
+
 		</script>
 	</body>
 </html>

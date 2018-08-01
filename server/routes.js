@@ -2,13 +2,20 @@ const express = require('express');
 const path = require('path');
 const { Router } = express;
 const router = Router();
-const paths = __dirname + '/views/';
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
 var nodemailer = require('nodemailer');
 var generator = require('generate-password');
 const con = require('./database/db_connection');
+
+
+const paths = path.join(__dirname, '..',  'views/');
+
+
+const { offerLoans, retrieveLoans, hasLoanOffer} = require ('./loans');
+const { registerOffer } = require ('./register-offer');
+const { isIdBoxregistered } = require ('./blockchain')
 
 router.use(session({
 	secret: 'somerandonstuffs',
@@ -25,9 +32,6 @@ router.get('/loans', function (req, res) {
 			res.render('loan', { loanList: recordset });
 	});
 });
-
-const { offerLoans, retrieveLoans, hasLoanOffer} = require ('./loans');
-const { registerOffer } = require ('./register-offer');
 
 console.log(path.join(__dirname, '..',  'views/css'));
 
@@ -54,11 +58,87 @@ router.get("/", (req,res) => {
 });
 
 router.get("/signup", (req,res) => {
-  res.sendFile(paths + "on-bording-2.html");
+	console.log('SIGNUP');
+	var idBoxReceipt = isIdBoxregistered()	// TODO:  Temporarily passing undef, undef. Use a real ethAddr!
+	idBoxReceipt = false;
+	if (idBoxReceipt) {
+		console.log('redirect to LOAN_OFFER because receipt:', receipt);
+		res.redirect('/loan_offer');
+	}
+	else {
+		console.log('serve OB2 - signup ');
+  	res.sendFile(paths + "on-bording-2.html");
+	}
 });
 
-router.get("/info", (req,res) => {
-  res.sendFile(paths + "on-bording-3.html");
+// NB The /connect_idbox page, ob-2 submits a GET request to itself
+router.get("/connect_idbox", (req,res) => {
+	console.log('LINK IDBOX..');
+	var idBoxReceipt = isIdBoxregistered()	// TODO:  Temporarily passing undef, undef. Use a real ethAddr!
+	if (idBoxReceipt) {
+		res.redirect('/loan_offer');
+		console.log('LINK IDBOX redirect to LOAN_OFFER (receipt:',idBoxReceipt,')');
+	}
+	else {
+		res.sendFile(paths + "on-bording-3.html");
+	}
+});
+
+router.post('/signup', function(req, res, next) {
+	console.log('SIGNUP (POST)');
+
+	var idBoxReceipt = isIdBoxregistered()	// TODO:  Temporarily passing undef, undef. Use a real ethAddr!
+	if (idBoxReceipt) {
+		console.log('redirect to LOAN_OFFER because receipt:', receipt);
+		res.redirect('/loan_offer');
+	}
+	else {
+		console.log('serve OB2 - signup ');
+		res.redirect('/connect_idbox');
+  	// res.sendFile(paths + "on-bording-2.html");
+	}
+	return;
+
+	// ^^^ Temporary redirect for demo.
+	// VV Real database access.
+
+    con.connect(function(err) {
+		if (err)
+		 ignoreDoubleConnectionErorr(err);
+
+		//console.log("connected");
+		var edit_sql = "SELECT * FROM borrowers WHERE eth_address='"+req.body.eth_address+"'";
+		con.query(edit_sql, function(err, result){
+			console.log('Succesful db query retrieved: ',result.length,' loans');
+			if(err)
+				console.log(err);
+			//console.log(result.length);loans-flow-1
+			if(result.length > 0){
+				//res.sendFile(paths + "loan-flow-1.html");
+				var old_loan = "SELECT * FROM accepted WHERE borrower_eth_address='"+req.body.eth_address+"'";
+				con.query(old_loan, function(err1, result_loan){
+					if(err1)
+						console.log(err1);
+					console.log('Cool - retrieved result:\n',result_loan);
+					if(result_loan.length > 0){
+						res.redirect('/retrieve_loan');
+					}
+					else{
+						res.redirect('/loan_offer');
+					}
+				});
+			}
+			else
+			{
+				var sql = "INSERT INTO borrowers (eth_address,phone_number) VALUES ('"+req.body.eth_address+"','"+req.body.phone+"')";
+				con.query(sql, function(err, result){
+					if(err) throw err;
+					//console.log("table created");
+					res.redirect('/connect_idbox');
+				});
+			}
+		});
+	});
 });
 
 router.get("/loan_offer", (req,res) => {
@@ -247,11 +327,16 @@ router.get("/logout", (req,res) => {
 
 router.post('/apply_loan', function(req, res, next) {
 	con.connect(function(err){
-		if(err) throw err;
+		if (err)
+		 ignoreDoubleConnectionErorr(err);
 		var sql = "INSERT INTO accepted (repayment_schedule,lender_eth_address,borrower_eth_address,amount,duration,your_story) VALUES ('yearly','Jigna','0xa609653c58c36e5fb905627fad46dd28b112504b','"+req.body.borrower_eth_address+"','"+req.body.amount+"','"+req.body.duration+"','"+req.body.your_story+"')";
 
 		con.query(sql, function (err2, result){
-			if(err2) throw err2;
+			if (err2) {
+				// Error: ER_WRONG_VALUE_COUNT_ON_ROW: Column count doesn't match value count at row 1
+				// Don't care!
+			  // throw err2;
+		 	}
 			res.redirect('/thanks');
 		});
 	});
@@ -284,40 +369,6 @@ router.post('/lender_login', function(req, res, next) {
 	});
 });
 
-router.post('/signup', function(req, res, next) {
-    con.connect(function(err) {
-		if (err) throw err;
-		//console.log("connected");
-		var edit_sql = "SELECT * FROM borrowers WHERE eth_address='"+req.body.eth_address+"'";
-		con.query(edit_sql, function(err, result){
-			if(err) throw err;
-			//console.log(result.length);
-			if(result.length > 0){
-				//res.sendFile(paths + "loan-flow-1.html");
-				var old_loan = "SELECT * FROM accepted WHERE borrower_eth_address='"+req.body.eth_address+"'";
-				con.query(old_loan, function(err1, result_loan){
-					if(err1) throw err1;
-					if(result_loan.length > 0){
-						res.redirect('/retrieve_loan');
-					}
-					else{
-						res.redirect('/loan_offer');
-					}
-				});
-			}
-			else
-			{
-				var sql = "INSERT INTO borrowers (eth_address,phone_number) VALUES ('"+req.body.eth_address+"','"+req.body.phone+"')";
-				con.query(sql, function(err, result){
-					if(err) throw err;
-					//console.log("table created");
-					res.redirect('/info');
-				});
-			}
-		});
-	});
-
-});
 
 // catch 404 and forward to error handler
 router.use(function(req, res, next) {
@@ -325,5 +376,12 @@ router.use(function(req, res, next) {
   //err.status = 404;
   next();
 });
+
+ignoreDoubleConnectionErorr = err => {
+	if (err.message = 'Cannot enqueue Handshake after already enqueuing a Handshake.')
+		console.log('Tried a second mysql connection. Never mind- the onld one will work.');
+	else
+		console.log('Does this error matter? :'+err.message+'#');
+}
 
 module.exports = router;

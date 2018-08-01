@@ -30,6 +30,7 @@ hr{margin-top: 20px;margin-bottom: 20px;border-top: 1px solid #5cb85c; width:100
 .form-control:focus{border-color:#67B44B}
 textarea.form-control{ height: 135px}
 .btn-success {background-color:#67B44B;border-color:#5cb85c;}
+.btn_shaded-out {opacity:0.5;background-color:#449d44;border-color:#5cb85c;}
 
 /*Loan Flow*/
 .loan-flow1{ background: url(/img/WOMEN_01.png)no-repeat center top #8B0203; color:#fff}
