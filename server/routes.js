@@ -59,22 +59,25 @@ router.get("/", (req,res) => {
 
 router.get("/signup", (req,res) => {
 	console.log('SIGNUP');
-	if (isIdBoxregistered() ) {												// TODO: Temporarily passing undef, undef. Use a real ethAddr!
-		console.log('redirect to LOAN_OFFER');
+	var idBoxReceipt = isIdBoxregistered()	// TODO:  Temporarily passing undef, undef. Use a real ethAddr!
+	idBoxReceipt = false;
+	if (idBoxReceipt) {
+		console.log('redirect to LOAN_OFFER because receipt:', receipt);
 		res.redirect('/loan_offer');
 	}
 	else {
-		console.log('serve OB2 - signup');
+		console.log('serve OB2 - signup ');
   	res.sendFile(paths + "on-bording-2.html");
 	}
 });
 
-// NB The /info page, ob-2 submits a GET request to itself
-router.get("/info", (req,res) => {
-	console.log('INFO..');
-	if (isIdBoxregistered() ) {											// TODO:  Temporarily passing undef, undef. Use a real ethAddr!
+// NB The /connect_idbox page, ob-2 submits a GET request to itself
+router.get("/connect_idbox", (req,res) => {
+	console.log('LINK IDBOX..');
+	var idBoxReceipt = isIdBoxregistered()	// TODO:  Temporarily passing undef, undef. Use a real ethAddr!
+	if (idBoxReceipt) {
 		res.redirect('/loan_offer');
-		console.log('INFO redirect to LOAN_OFFER');
+		console.log('LINK IDBOX redirect to LOAN_OFFER (receipt:',idBoxReceipt,')');
 	}
 	else {
 		res.sendFile(paths + "on-bording-3.html");
@@ -83,6 +86,22 @@ router.get("/info", (req,res) => {
 
 router.post('/signup', function(req, res, next) {
 	console.log('SIGNUP (POST)');
+
+	var idBoxReceipt = isIdBoxregistered()	// TODO:  Temporarily passing undef, undef. Use a real ethAddr!
+	if (idBoxReceipt) {
+		console.log('redirect to LOAN_OFFER because receipt:', receipt);
+		res.redirect('/loan_offer');
+	}
+	else {
+		console.log('serve OB2 - signup ');
+		res.redirect('/connect_idbox');
+  	// res.sendFile(paths + "on-bording-2.html");
+	}
+	return;
+
+	// ^^^ Temporary redirect for demo.
+	// VV Real database access.
+
     con.connect(function(err) {
 		if (err)
 		 ignoreDoubleConnectionErorr(err);
@@ -115,7 +134,7 @@ router.post('/signup', function(req, res, next) {
 				con.query(sql, function(err, result){
 					if(err) throw err;
 					//console.log("table created");
-					res.redirect('/info');
+					res.redirect('/connect_idbox');
 				});
 			}
 		});

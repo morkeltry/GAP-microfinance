@@ -4,7 +4,8 @@
 
 
 const isIdBoxregistered  = (ethAddr, phoneNo)  => {
-  return (Math.random() > 0.8)
+  if (Math.random() > 0.8)
+    return (Math.random())
 }
 
 module.exports = { isIdBoxregistered }
